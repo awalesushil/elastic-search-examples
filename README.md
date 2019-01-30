@@ -25,7 +25,7 @@ Visit:
 
 Run the Elastic Search queries from Kibana Web Interface in **Dev Tools**
 
-## Session 1
+## Week 1
 
-* [Examples](https://github.com/awalesushil/elastic-search-examples/blob/master/Session%201/examples.es)
-* [Assignment](https://github.com/awalesushil/elastic-search-examples/blob/master/Session%201/assignment.es)
+* [Examples](https://github.com/awalesushil/elastic-search-examples/blob/master/Week%201/examples.es)
+* [Assignment](https://github.com/awalesushil/elastic-search-examples/blob/master/Week%201/assignment.es)
