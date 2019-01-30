@@ -1,10 +1,10 @@
 # Elastic Search Examples
 
-The repository consists of elastic search queries.
+The repository consists of elastic search examples and assignments of a Elastic Search Workshop.
 
 ## Instructions
 
-### Docker Compose
+### Docker Compose (Optional)
 
 To run the container for ELK using docker-compose.
 
@@ -24,3 +24,7 @@ Visit:
 ### Running the queries
 
 Run the Elastic Search queries from Kibana Web Interface in **Dev Tools**
+
+## Session 1
+
+* [Examples](https://https://github.com/awalesushil/elastic-search-examples/blob/master/Session%201/examples.es)
