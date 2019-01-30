@@ -1,27 +1,27 @@
-# CREATING an index
+/* CREATING an index */
 PUT test_index
 
-# CREATING a document in the index with field name
-# Using PUT
+/* CREATING a document in the index with field name */
+/* Using PUT */
 PUT /test_index/_doc/1
 {
     "name": "Oreo"
 }
 
-# Using POST
+/* Using POST */
 POST /test_index/_doc/
 {
     "name": "Bourbon"
 }
 
-# READING documents
-# By Id
+/* READING documents */
+/* By Id */
 GET test_index/_doc/1
 
-# All documents using _search
+/* All documents using _search */
 GET test_index/_search
 
-# UPDATING Documents
+/* UPDATING Documents */
 POST test_index/_doc/1/_update
 {
     "doc": {
@@ -29,13 +29,13 @@ POST test_index/_doc/1/_update
     }
 }
 
-# Using scripts
+/* Using scripts */
 POST test_index/_doc/1/_update
 {
     "script": "ctx._source.stock+=10"
 }
 
-# Using painless scripts
+/* Using painless scripts */
 POST test_index/_doc/1/_update
 {
     "script": {
@@ -47,7 +47,7 @@ POST test_index/_doc/1/_update
     }
 }
 
-# Check if update field exists
+/* Check if update field exists */
 POST test_index/_doc/1/_update
 {
   "script": {
@@ -63,7 +63,7 @@ POST test_index/_doc/1/_update
   }
 }
 
-# Adding new field without script
+/* Adding new field without script */
 POST test_index/_doc/5
 {
     "tags": [
@@ -71,7 +71,7 @@ POST test_index/_doc/5
     ]
 }
 
-# Adding an object into a field, here an array
+/* Adding an object into a field, here an array */
 POST test_index/_doc/5/_update
 {
   "script": {
@@ -85,17 +85,17 @@ POST test_index/_doc/5/_update
 
 GET test_index/_doc/5
 
-# DELETING a document
+/* DELETING a document */
 POST test_index/_doc/5/_update
 {
   "script": {
     "lang": "painless",
-    "source": """
+    "course": """
               if (ctx._source.tags.contains(params.tag)) {
                 ctx.op = 'delete'
               }
-    """
-    , "params": {
+    """,
+    "params": {
         "tag": "technology"
     }
   }
