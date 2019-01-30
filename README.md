@@ -17,9 +17,9 @@ You may encounter a virtual-memory error when using in Linux. Add the following 
 
 Visit:
 
-`http://localhost:9200` for Elasticsearch JSON interface
-`http://localhost:5601` for Kibana web interface
-`http://localhost:5044` for Logstash Beats interface
+* `http://localhost:9200` for Elasticsearch JSON interface
+* `http://localhost:5601` for Kibana web interface
+* `http://localhost:5044` for Logstash Beats interface
 
 ### Running the queries
 
