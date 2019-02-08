@@ -462,7 +462,6 @@ C. Create an index workshop having following fields
 - workshop_about
 - enrolled_year
 */
-
 PUT workshop
 {
     "mappings": {
@@ -490,15 +489,15 @@ D. Bulk insert 5 documents in index workshop.
 
 PUT workshop/_doc/_bulk
 {"index":{"_id":1}}
-{"id":307,"workshop_about":"Elastic Search","enrolled_year":"2016"}
+{"student_id":307,"workshop_about":"Elastic Search","enrolled_year":"2016"}
 {"index":{"_id":2}}
-{"id":443,"workshop_about":"Machine Learning","enrolled_year":"2017"}
+{"student_id":443,"workshop_about":"Machine Learning","enrolled_year":"2017"}
 {"index":{"_id":3}}
-{"id":503,"workshop_about":"Android Programming","enrolled_year":"2017"}
+{"student_id":503,"workshop_about":"Android Programming","enrolled_year":"2017"}
 {"index":{"_id":4}}
-{"id":501,"workshop_about":"Python Programming","enrolled_year":"2018"}
+{"student_id":501,"workshop_about":"Python Programming","enrolled_year":"2018"}
 {"index":{"_id":5}}
-{"id":615,"workshop_about":"Elastic Search","enrolled_year":"2019"}
+{"student_id":615,"workshop_about":"Elastic Search","enrolled_year":"2019"}
 
 /*
 E. Using terms query, find the students of your batch enrolled in any workshop.
@@ -508,11 +507,11 @@ GET workshop/_search
 {
   "query": {
     "terms": {
-      "student": {
+      "student_id": {
         "index": "college",
         "type": "_doc",
         "id": 1,
-        "path": "id"
+        "path": "student.id"
       }
     }
   }
