@@ -33,3 +33,7 @@ Run the Elastic Search queries from Kibana Web Interface in **Dev Tools**
 ## Week 2
 
 * [Assignment](https://github.com/awalesushil/elastic-search-examples/blob/master/Week%202/assignment.es)
+
+## Week 3
+
+* [Assignment](https://github.com/awalesushil/elastic-search-examples/blob/master/Week%203/assignment.es)
