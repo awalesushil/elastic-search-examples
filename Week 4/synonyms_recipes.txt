@@ -1,0 +1,3 @@
+finish = > complete, cease, end
+sweet => delicious, sugared
+necessary => basic, fundamental, vital
