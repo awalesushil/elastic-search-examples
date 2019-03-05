@@ -148,7 +148,7 @@ POST recipes/_update_by_query?conflicts=proceed
     "script": {
         "lang": "painless",
         "source": """
-            if ((ctx._source.servings.max - ctx._source.servings.min).contains([1,2,3])) {
+            if ((ctx._source.servings.max - ctx._source.servings.min)) {
                 
             }
         """
@@ -930,3 +930,299 @@ GET order_sample/_search
         }
     }
 }
+
+/*
+
+Creativity Check
+
+Create an index of your own choice with mapping having fields of different types. 
+Consider using all the types that we have learnt so far. 
+Prefer creating analyzer and try using synonyms and stop-words filters in the analyzer.
+
+*/
+
+PUT football_club
+{
+    "settings": {
+        "index": {
+            "analysis": {
+                "analyzer": {
+                    "custom_analyzer": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": [
+                            "lowercase",
+                            "custom_stopwords",
+                            "custom_synonyms"
+                        ]
+                    }
+                },
+                "filter": {
+                    "custom_stopwords": {
+                        "type": "stop",
+                        "stopwords": "_english_"
+                    },
+                    "custom_synonyms": {
+                        "type": "synonym",
+                        "synonyms": ["football=>soccer","team=>squad", "league=>division",
+                        "premier league=>english league", "la liga=>spanish league",
+                        "serie a=>italian league", "ligue 1=>french league"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "mappings": {
+        "_doc": {
+            "dynamic": false,
+            "properties": {
+                "name": {
+                    "type": "text"
+                },
+                "league": {
+                    "type": "text"
+                },
+                "established_date": {
+                    "type": "date",
+                    "format": "yyyy-MM-dd"
+                },
+                "location": {
+                    "type": "keyword"
+                },
+                "kit": {
+                    "type": "nested",
+                    "properties": {
+                        "color": {
+                            "type": "keyword"
+                        },
+                        "type": {
+                            "type": "keyword"
+                        }
+                    }
+                },
+                "stadium": {
+                    "properties": {
+                        "name": {
+                            "type": "text"
+                        },
+                        "location": {
+                            "type": "geo_point"
+                        },
+                        "capactiy": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "current_manager": {
+                    "properties": {
+                        "name": {
+                            "type": "text"
+                        },
+                        "years_in_charge": {
+                            "type": "double"
+                        }
+                    }
+                },
+                "no_of_trophies_won": {
+                    "type": "integer"
+                },
+                "privately_owned": {
+                    "type": "boolean"
+                },
+                "players_age_range": {
+                    "type": "integer_range"
+                },
+                "market_value_in_billion": {
+                    "type": "double"
+                }
+            }
+        }
+    }
+}
+
+/*
+Bulk insert at least 10 documents creating a json file yourself and by using curl.
+*/
+
+curl -H "Content-Type: application/json" 
+    -XPOST "http://localhost:9200/football_club/_doc/_bulk?pretty" 
+    --data-binary @football_club.json
+
+/*
+Perform as many different searches and aggregations as you would like to for analyzing various aspects of 
+your data.
+*/
+
+GET football_club/_search
+
+/* Searching with Synonyms */
+GET football_club/_doc/_search
+{
+    "query": {
+        "match": {
+            "name": "chelsea soccer"
+        }
+    }, 
+    "highlight": {
+        "fields": {
+            "name": {}
+        }
+    }
+}
+
+GET football_club/_doc/_search
+{
+    "query": {
+        "match_phrase_prefix": {
+            "league": "english league"
+        }
+    }
+}
+
+/* Fuzzy Query */
+GET football_club/_doc/_search
+{
+    "query": {
+        "fuzzy" : {
+            "league" : {
+                "value": "league",
+                "fuzziness": 4
+            }
+        }
+    }
+}
+
+/* Nested Bool Query */
+GET football_club/_doc/_search
+{
+    "query": {
+        "nested": {
+            "path": "kit",
+            "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "term": {
+                                "kit.color": {
+                                    "value": "white"
+                                }
+                            }
+                        }
+                    ],
+                    "should": [
+                        {
+                            "term": {
+                                "kit.type": {
+                                    "value": "away"
+                                }
+                            }
+                        }
+                    ]
+                }   
+            }
+        }
+    }
+}
+
+/* Geo Queries */
+/* Neighbours of Chelsea FC */
+GET football_club/_search
+{
+  "query": {
+        "bool": {
+        "filter": {
+            "geo_distance": {
+                "distance": "100km",
+                "stadium.location": {
+                    "lat": 51.28,
+                    "lon": 0.11
+                }
+            }
+        }
+        }
+    }
+}
+
+
+/* Sort */
+GET football_club/_doc/_search
+{
+    "query": {
+        "match_all": {}
+    },
+    "sort": [
+        {
+            "market_value_in_billion": {
+                "order": "desc"
+            }
+        }
+    ]
+}
+
+/* Range Aggregation with Custom Keys */
+GET football_club/_doc/_search
+{
+    "size": 0,
+    "aggs": {
+        "success_index": {
+            "range": {
+                "field": "no_of_trophies_won",
+                "ranges": [
+                    {
+                        "key": "Successful",
+                        "to": 40
+                    },
+                    {
+                        "key": "Very Successful",
+                        "from": 40,
+                        "to": 80
+                    },
+                    {
+                        "key": "Most Successful",
+                        "from": 80
+                    }
+                ]
+            }
+        }
+    }
+}
+
+/* Bucket Aggregation */
+
+PUT football_club/_mapping/_doc
+{
+  "properties": {
+    "league": { 
+      "type":     "text",
+      "fielddata": true
+    }
+  }
+}
+
+GET football_club/_doc/_search
+{
+    "size": 0,
+    "aggs": {
+        "clubs_in_different_leagues": {
+            "terms": {
+                "field": "league",
+                "min_doc_count": 0
+            }
+        }
+    }
+}
+
+/* Extended stats */
+GET football_club/_doc/_search
+{
+  "size": 0,
+  "aggs": {
+    "stats": {
+      "extended_stats": {
+        "field": "market_value_in_billion"
+      }
+    }
+  }
+}
+
